@@ -1,0 +1,11 @@
+import os
+
+nome_base='IndividuoWine1'
+
+dcol = "/home/marcos/Documents/Tese/dcol/DCoL-v1.1/Source/dcol"
+enderecoin = " -i /home/marcos/Documents/Tese/1/"
+os.system("mkdir /home/marcos/Documents/Tese/ComplexidadeBag/"+nome_base)
+enderecoout = " -o /home/marcos/Documents/Tese/ComplexidadeBag/"+nome_base+"/complexidade"+nome_base
+
+
+os.system(dcol+enderecoin+nome_base+".arff"+enderecoout+" -d -F 1 -N 2")
