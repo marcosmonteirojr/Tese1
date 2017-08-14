@@ -65,18 +65,18 @@ def main():
     valor = (distancia_maxima(dataset, dataset2, 0, 24))
     dados=dict()
     dados['data'] = list()
-    #for i in range(44):#range tamnho da base
-        # dados = dict()
-        # dados['data'] = list()
-        # valor=(distancia_maxima(dataset, dataset2, i, 24))
-        # for j in dataset2['data']:
-        #     vetor2 = (j[:-1])
-        #     c=euclidean4(dataset['data'][i][:-1], vetor2)
-        #     if c<=valor:
-        #         dados['data'].append(j)
-        #distancias='Distancias'+nome_base+str(i)
-        # cria_arff(dataset, dados, distancias)
-        #os.system(dcol+enderecoin+distancias+".arff"+enderecoout+str(i)+" -F 1 -N 2")
+    for i in range(44):#range tamnho da base
+        dados = dict()
+        dados['data'] = list()
+        valor=(distancia_maxima(dataset, dataset2, i, 24))
+        for j in dataset2['data']:
+            vetor2 = (j[:-1])
+            c=euclidean4(dataset['data'][i][:-1], vetor2)
+            if c<=valor:
+                dados['data'].append(j)
+        distancias='Distancias'+nome_base+str(i)
+        cria_arff(dataset, dados, distancias)
+        os.system(dcol+enderecoin+distancias+".arff"+enderecoout+str(i)+" -d -F 1 -N 2")
 
 if __name__ == '__main__':
     main()
