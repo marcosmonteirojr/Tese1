@@ -38,7 +38,7 @@ def cria_arff(info, data, nome):
     arq1=arff.dumps(obj)
     arq=open('/home/marcos/Documents/Tese/Distancias/ResultadosDistanciasValidaTeste/'+nome_base+'/'+nome+'.arff','w')
     arq.write(arq1)
-    arq.close() 
+    arq.close()
 
 def distancia_maxima(data, data2, pos, dist):
     """compara data[pos] com todos data2 1 a um retorna a distancia escolhida
