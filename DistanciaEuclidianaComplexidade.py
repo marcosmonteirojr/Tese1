@@ -7,7 +7,7 @@ dataset2 = arff.load(open('/home/marcos/Documents/Tese/Distancias/ValidaWine1.ar
 dcol = "/home/marcos/Documents/Tese/dcol/DCoL-v1.1/Source/dcol"
 enderecoin = " -i /home/marcos/Documents/Tese/Distancias/ResultadosDistanciasValidaTeste/"+nome_base+"/"
 os.system("mkdir /home/marcos/Documents/Tese/Complexidade/"+nome_base)
-enderecoout = " -o /home/marcos/Documents/Tese/Complexidade/"+nome_base+"/complexidade"+nome_base
+enderecoout = " -o /home/marcos/Documents/Tese/ComplexidadeDist/"+nome_base+"/complexidade"+nome_base
 
 
 def euclidean4(vector1, vector2):
