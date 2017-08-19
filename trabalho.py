@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import NearestNeighbors
 from sklearn.neural_network import MLPClassifier
-from sklearn import preprocessing
+from sklearn.metrics import confusion_matrix
 from sklearn import tree
 dataset2 = arff.load(open('/home/marcos/Documents/Tese/Distancias/TesteWine1.arff'))
 dataset = arff.load(open('/home/marcos/Documents/Tese/Distancias/ValidaWine1.arff'))
@@ -33,20 +33,23 @@ X_train, X_test, y_train, y_test = train_test_split(instancias, lables, test_siz
 
 t=tree.DecisionTreeClassifier()
 model=t.fit(X_train,y_train)
-t.predict(X_test,y_test)
-
+tt=t.predict(X_test)
+print(confusion_matrix(tt,y_test))
 
 
 nb=GaussianNB()
 nb.fit(X_train,y_train)
+nbb=nb.predict(X_test)
+print(confusion_matrix(nbb,y_test))
 
 nn=NearestNeighbors(n_neighbors=2, algorithm='ball_tree')
 nn.fit(X_train,y_train)
 
-mlp=MLPClassifier(solver='lbfgs', alpha=1e-1,hidden_layer_sizes=(5, 2), random_state=1)
+mlp=MLPClassifier(solver='lbfgs', alpha=.1,hidden_layer_sizes=(5, 3), random_state=1)
 mlp.fit(X_train,y_train)
 
-print (mlp.score(X_test,y_test))
+
+print (confusion_matrix(mlp.predict(X_test),y_test))
 
 
 
