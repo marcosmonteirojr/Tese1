@@ -23,7 +23,7 @@ def euclidean4(vector1, vector2):
 def cria_arff(info, data, nome):
     """
     cria um arquivo arff no E:
-    @:param info: descrição da base/ relaçao
+    @:param info: descricao da base/ relacao
     @:param data: dados da base
     @:param nome: do arquivo a ser gerado
     :return:

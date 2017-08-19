@@ -20,7 +20,7 @@ data1 = [float(j) for j in data1]
 
 
 #     print(c)
-#     c-=1
+#     c-=1cond
 
 
 #x = np.array(range(len(data1)))
