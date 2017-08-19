@@ -1,7 +1,7 @@
 import arff, os
 import numpy as np
 from sklearn.model_selection import  StratifiedKFold
-from sklearn import datasets
+from sklearn import preprocessing
 from sklearn import tree
 dataset = arff.load(open('/home/marcos/Documents/Tese/Distancias/TesteWine1.arff'))
 dataset2 = arff.load(open('/home/marcos/Documents/Tese/Distancias/ValidaWine1.arff'))
@@ -19,6 +19,6 @@ print(skf)
 for train_index, test_index in skf.split(smlables, lables):
     #print("TRAIN:", train_index, "TEST:", test_index)
     X_train, X_test = smlables[train_index], smlables[test_index]
-    y_train, y_test = lables[train_index], lables[test_index]
+    y_train, y_test = lables[train_index], lables[test_index   ]
 
-    print(X_test)
+print(X_test)
