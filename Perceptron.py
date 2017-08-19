@@ -11,15 +11,16 @@ teste = arff.load(open('/home/marcos/Documents/Tese/Distancias/ValidaWine1.arff'
 nome_base="Wine"
 resultados=[]
 #net = perceptron.Perceptron(n_iter=100, verbose=0, random_state=None, fit_intercept=True)
-
+print(treino['data'])
 if (os.path.exists("clf_pec"+nome_base+".pkl") == False):#verifica se exite um job do classificador
     perc = perceptron.Perceptron(n_iter=100, verbose=0, random_state=None, fit_intercept=True)#chama o indutor perceptron
     for i in range(len(treino['data'])):#percorre a base treino e separa os lables das classes
         lables.append(treino['data'][i][13])
     for i in treino['data']:#percorre a base treino e salva os atributos sem a classe
         dados.append(i[:-1])
+
     perc.fit(dados,lables)#treina o perceptron
-    print(perc.score(dados,lables))
+    #print(perc.score(dados,lables))
     joblib.dump(perc, "clf_pec"+nome_base+".pkl")#salva o job
 else:
     perc = joblib.load("clf_pec"+nome_base+".pkl")# se ja existe o job carrega (job= classificador completo)
@@ -31,11 +32,8 @@ else:
 resultados=np.array(resultados)
 for i in resultados:
     if i == "1":
-        print('é')
+        print('e')
     elif i == "2":
         print('n')
-    elif i == "3":
+    #elif i == "3":
 
-
-# arq.write(resultados)
-# arq.close()

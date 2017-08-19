@@ -76,7 +76,7 @@ def main():
                 dados['data'].append(j)
         distancias='Distancias'+nome_base+str(i)
         cria_arff(dataset, dados, distancias)
-        os.system(dcol+enderecoin+distancias+".arff"+enderecoout+str(i)+" -d -F 1 -N 2")
+       # os.system(dcol+enderecoin+distancias+".arff"+enderecoout+str(i)+" -d -F 1 -N 2")
 
 if __name__ == '__main__':
     main()
