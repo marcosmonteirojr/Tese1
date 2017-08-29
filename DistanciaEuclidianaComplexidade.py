@@ -1,13 +1,13 @@
 import arff, os
 from scipy.spatial import distance
-nome_base="Wine"
+#nome_base="Wine2"
 
-dataset = arff.load(open('/home/marcos/Documents/Tese/Distancias/TesteWine1.arff'))
-dataset2 = arff.load(open('/home/marcos/Documents/Tese/Distancias/ValidaWine1.arff'))
-dcol = "/home/marcos/Documents/Tese/dcol/DCoL-v1.1/Source/dcol"
-enderecoin = " -i /home/marcos/Documents/Tese/Distancias/ResultadosDistanciasValidaTeste/"+nome_base+"/"
-os.system("mkdir /home/marcos/Documents/Tese/Complexidade/"+nome_base)
-enderecoout = " -o /home/marcos/Documents/Tese/ComplexidadeDist/"+nome_base+"/complexidade"+nome_base
+# dataset = arff.load(open('/home/marcos/Documents/Tese/Bases/Teste/2/TesteWine2.arff'))
+# dataset2 = arff.load(open('/home/marcos/Documents/Tese/Bases/Validacao/2/ValidaWine2.arff'))
+# dcol = "/home/marcos/Documents/Tese/dcol/DCoL-v1.1/Source/dcol"
+# enderecoin = " -i /home/marcos/Documents/Tese/Distancias/ResultadosDistanciasValidaTeste/"+nome_base+"/"
+# os.system("mkdir /home/marcos/Documents/Tese/Complexidade/"+nome_base)
+# enderecoout = " -o /home/marcos/Documents/Tese/ComplexidadeDist/"+nome_base+"/complexidade"+nome_base
 
 
 def euclidean4(vector1, vector2):
@@ -62,21 +62,42 @@ def distancia_maxima(data, data2, pos, dist):
     return distancias[dist] #retorna o valor da distancia na posisao desejada
 
 def main():
-    valor = (distancia_maxima(dataset, dataset2, 0, 24))
-    dados=dict()
-    dados['data'] = list()
-    for i in range(44):#range tamnho da base
-        dados = dict()
+
+
+    for i in range(1,21):
+        b=i
+        a=str(i)
+        i=b
+        global nome_base,k,nome_b#nome_base serve para abrir os arquivos, nome_b para dar nome ao novos arquivos
+        nome_base = 'Wine'+a
+        nome_b = 'Wine'
+        k = 0
+       # print(i)
+        dataset = arff.load(open('/home/marcos/Documents/Tese/Bases/Teste/'+a+'/TesteWine'+a+'.arff'))
+        dataset2 = arff.load(open('/home/marcos/Documents/Tese/Bases/Validacao/'+a+'/ValidaWine'+a+'.arff'))
+        dcol = "/home/marcos/Documents/Tese/dcol/DCoL-v1.1/Source/dcol"
+        enderecoin = " -i /home/marcos/Documents/Tese/Distancias/ResultadosDistanciasValidaTeste/" + nome_base + "/"
+        os.system("mkdir /home/marcos/Documents/Tese/ComplexidadeDist/" + nome_base)
+        os.system("mkdir /home/marcos/Documents/Tese/Distancias/ResultadosDistanciasValidaTeste/" + nome_base)
+        enderecoout = " -o /home/marcos/Documents/Tese/ComplexidadeDist/" + nome_base + "/complexidade" + nome_b
+
+        #valor = (distancia_maxima(dataset, dataset2, 0, 30))
+        dados=dict()
         dados['data'] = list()
-        valor=(distancia_maxima(dataset, dataset2, i, 24))
-        for j in dataset2['data']:
-            vetor2 = (j[:-1])
-            c=euclidean4(dataset['data'][i][:-1], vetor2)
-            if c<=valor:
-                dados['data'].append(j)
-        distancias='Distancias'+nome_base+str(i)
-        cria_arff(dataset, dados, distancias)
-        os.system(dcol+enderecoin+distancias+".arff"+enderecoout+str(i)+" -d -F 1 -N 2")
+        for i in range(len(dataset['data'])):#range tamnho da base
+            dados = dict()
+            dados['data'] = list()
+            valor=(distancia_maxima(dataset, dataset2, i, 30))
+            for j in dataset2['data']:
+                vetor2 = (j[:-1])
+                c=euclidean4(dataset['data'][i][:-1], vetor2)
+                if c<=valor:
+                    dados['data'].append(j)
+
+            distancias='Distancias'+nome_b+str(k)
+            cria_arff(dataset, dados, distancias)
+            os.system(dcol+enderecoin+distancias+".arff"+enderecoout+str(k)+" -d -F 1 -N 2")
+            k=k+1
 
 if __name__ == '__main__':
     main()
