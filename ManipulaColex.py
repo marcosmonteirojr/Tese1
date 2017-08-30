@@ -179,8 +179,8 @@ def main():
     for i in range(1,101):
         nome_b='Wine'+str(i)
         nome_base='Wine'
-        #cria_resumo(nome_b, i, out, nome_base,tipo=1)
-        #cria_csv(nome_b,nome_base,tipo=1)
+        cria_resumo(nome_b, i, out, nome_base,tipo=1)
+        cria_csv(nome_b,nome_base,tipo=1)
         calcula_media(nome_base,nome_b, cont=0,con2=0,nclas=3,d1=3,tipo=1)
     # global nome_b,nome_base, media,median2#medias de F2
     # media = []  # medias de F1
