@@ -4,11 +4,13 @@ import matplotlib.pyplot as plt
 nome_base="Wine"
 
 
-def gera_grafico(arq1, arq2 ,title):
+def gera_grafico(arq1, arq2, arq3 ,title):
     data1 = []
     data2 = []
     data3 = []
     data4 = []
+    data5 = []
+    data6 = []
 
     for k in arq1:
         b = k.replace(', ', ' ')
@@ -34,14 +36,27 @@ def gera_grafico(arq1, arq2 ,title):
             data4.append(b[1])
             data3 = [float(w) for w in data3]
             data4 = [float(w) for w in data4]
-    print(((data3)))
+    for k in arq3:
+        b = k.replace(', ', ' ')
+        b = b.split(' ')
+        if b[0] == 'F1':
+            print(b)
+        else:
+            #print(b[1])
+            data5.append(b[0])
+            data6.append(b[1])
+            data5 = [float(w) for w in data5]
+            data6 = [float(w) for w in data6]
+    print(((data5)))
+
     fig = plt.figure()
     plt.title(title)
     bag=plt.scatter(data1, data2, c='red',marker='v', ) # green bolinha
     dist=plt.scatter(data3, data4, c='blue')
+    ag = plt.scatter(data5, data6, c='black')
     plt.xlabel("N2")
     plt.ylabel("F1")
-    plt.legend([bag, dist], ["Bag", "Dist"])
+    plt.legend([bag, dist, ag], ["Bag", "Dist", "AG"])
     #py.plot_mpl(fig, filename="mpl-complex-scatter")
 
 
@@ -57,8 +72,9 @@ def main():
     #arq1 = open('/home/marcos/Documents/Tese/ComplexidadeDist/' + nome_base + str(i) + '/Wine_medias.txt', 'r')
         arq2 = open('/home/marcos/Documents/Tese/ComplexidadeDist/' + nome_base + str(i) + '/Wine_medias.txt', 'r')
         arq1 = open('/home/marcos/Documents/Tese/ComplexidadeBags/' + nome_base + '/' + nome_base + '_medias.txt', 'r')
+        arq3 = open('/home/marcos/Documents/Tese/ComplexidadeAG/' + nome_base + '/' + nome_base + '_medias.txt', 'r')
 
-        gera_grafico(arq1=arq1, arq2=arq2, title=nome_base+str(i))
+        gera_grafico(arq1=arq1, arq2=arq2, arq3=arq3, title=nome_base+str(i))
 
 
 
