@@ -41,7 +41,7 @@ def cria_resumo(pasta,i,out,nome_base):
 
 def cria_csv(pasta,i,nome_base):
 
-    """
+    """ 
     trasnforma o resumo em csv
     idem ao cria resumo
     :param pasta:
