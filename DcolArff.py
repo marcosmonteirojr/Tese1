@@ -8,11 +8,11 @@ nome_base = 'Wine'
 
 dcol = "/home/marcos/Documents/Tese/dcol/DCoL-v1.1/Source/dcol"
 for j in range(1,15):
-    os.system("mkdir /home/marcos/Documents/Tese/ComplexidadeBags/" + nome_base+str(j))
+    os.system("mkdir /home/marcos/Documents/Tese/ComplexidadeBags/"+nome_base+"/" + nome_base+str(j))
     enderecoin = " -i /home/marcos/Documents/Tese/Baggs/" "Bag"+ nome_base + "/"+nome_base+str(j)
     # os.system("mkdir /home/marcos/Documents/Tese/Distancias/ResultadosDistanciasValidaTeste/" + nome_base)
-    enderecoout = " -o /home/marcos/Documents/Tese/ComplexidadeBags/" + nome_base+str(j) + "/complexidadeBag" + nome_base
+    enderecoout = " -o /home/marcos/Documents/Tese/ComplexidadeBags/"+nome_base +"/"+ nome_base+str(j) + "/complexidade" + nome_base
     for i in range(1,101):
         k=i-1
         distancias='/IndividuoWine'+str(i)
-        os.system(dcol+enderecoin+distancias+".arff"+enderecoout+str(k)+"  -d -F 1 -N 2")
+        os.system(dcol+enderecoin+distancias+".arff"+enderecoout+str(k)+" -d -F 1 -N 2")
