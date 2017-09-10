@@ -6,10 +6,10 @@ nome_base="Wine"
 
 
 def gera_grafico():
-    pdf_pages = PdfPages('Disp.pdf')
+    pdf_pages = PdfPages('histograms.pdf')
 
     # Generate the pages
-    nb_plots = 20
+    nb_plots = 14
 
     nb_plots_per_page = 5
     nb_pages = int(numpy.ceil(nb_plots / float(nb_plots_per_page)))
@@ -22,7 +22,7 @@ def gera_grafico():
     nome_base = 'Wine'
     j = 0
     r=0
-    for i in range(1, 21):
+    for i in range(1, 15):
         data3 = []
         data4 = []
         data1 = []
@@ -32,7 +32,7 @@ def gera_grafico():
         # arq1 = open('/home/marcos/Documents/Tese/ComplexidadeDist/' + nome_base + str(i) + '/Wine_medias.txt', 'r')
         arq2 = open('/home/marcos/Documents/Tese/ComplexidadeDist/'+nome_base+'/' + nome_base + str(i) + '/'+nome_base+'_medias.txt', 'r')
         arq1 = open('/home/marcos/Documents/Tese/ComplexidadeBags/'+nome_base+'/' + nome_base + str(i)+'/' + nome_base + '_medias.txt', 'r')
-        arq3 = open('/home/marcos/Documents/Tese/ComplexidadeAG/'+nome_base+'/' + nome_base + str(i)+ '/' + nome_base + '_medias.txt', 'r')
+        arq3 = open('/home/marcos/Documents/Tese/ComplexidadeAG/'+nome_base+'/' + nome_base + '1/' + nome_base + '_medias.txt', 'r')
         for k in arq1:
             b = k.replace(', ', ' ')
             b=b.split(' ')
@@ -76,12 +76,11 @@ def gera_grafico():
             fig = plot.figure(figsize=(8, 15), dpi=50)
         print(j)
         # Plot stuffs !
-        plot.subplot2grid(grid_size, (j % nb_plots_per_page, 0))
-        plot.axis((0.1,0.8,2,10))
+        plot.subplot2grid(grid_size, (j % nb_plots_per_page, r))
         plot.title(nome_base+str(i))
-        bag=plot.scatter(x=data2,y=data1,alpha=0.6,marker="v")
-        dist=plot.scatter(x=data4, y=data3,alpha=0.6,marker='+')
-        ag=plot.scatter(x=data6, y=data5, alpha=0.6)
+        bag=plot.scatter(x=data1,y=data2,alpha=0.6)
+        dist=plot.scatter(x=data3, y=data4,alpha=0.6)
+        ag=plot.scatter(x=data5, y=data6, alpha=0.6)
         plot.xlabel("N2")
         plot.ylabel("F1")
         plot.legend([bag, dist, ag], ["Bag", "Dist", "AG"])

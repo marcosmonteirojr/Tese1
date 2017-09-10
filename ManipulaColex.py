@@ -41,7 +41,7 @@ def cria_resumo(pasta,i,out,nome_base):
 
 def cria_csv(pasta,i,nome_base):
 
-    """ 
+    """
     trasnforma o resumo em csv
     idem ao cria resumo
     :param pasta:
@@ -159,9 +159,9 @@ def diretorios(tipo,nome_base):
 
 def main():
     nome_base = 'Wine'
-    pasta, cont_arq = diretorios(2,nome_base)
+    pasta, cont_arq = diretorios(1,nome_base)
     print (cont_arq)
-    for i in range(1,21):
+    for i in range(15,21):
         cria_resumo(pasta=pasta, i=i, out=cont_arq, nome_base=nome_base)
         cria_csv(pasta=pasta,i=i,nome_base=nome_base)
         calcula_media(pasta=pasta, nome_base=nome_base, i=i, nclas=3,d=3)

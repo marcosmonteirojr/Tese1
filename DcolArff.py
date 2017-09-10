@@ -7,7 +7,7 @@ nome_base = 'Wine'
 # enderecoout = " -o /home/marcos/Documents/Tese/ComplexidadeBags/" + nome_base + "/complexidadeBag" + nome_base
 
 dcol = "/home/marcos/Documents/Tese/dcol/DCoL-v1.1/Source/dcol"
-for j in range(1,15):
+for j in range(15,21):
     os.system("mkdir /home/marcos/Documents/Tese/ComplexidadeBags/"+nome_base+"/" + nome_base+str(j))
     enderecoin = " -i /home/marcos/Documents/Tese/Baggs/" "Bag"+ nome_base + "/"+nome_base+str(j)
     # os.system("mkdir /home/marcos/Documents/Tese/Distancias/ResultadosDistanciasValidaTeste/" + nome_base)
