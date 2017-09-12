@@ -2,7 +2,8 @@ import arff, numpy, random, os
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.externals import joblib
-
+global resultados, media, maior
+resultados=[]
 def cria_dataset(dataset):
     lables =[]
     instancias=[]
@@ -17,7 +18,7 @@ def cria_dataset(dataset):
 
 def cria_classificadores(X_train, y_train, repeticoes):
     #bags=list()
-
+    bagging=[]
     tree = DecisionTreeClassifier()
     for i in range(repeticoes):
         r = random.seed()
@@ -25,9 +26,19 @@ def cria_classificadores(X_train, y_train, repeticoes):
         tree.fit(X_bag,y_bag)
         joblib.dump(tree, "clf/TreeClas"+str(i)+".pkl")#salva o classificador
 
-def acuracia(classificador, X_test, y_test):#mede a acuracia do classificador
-    print(classificador.score(X_test,y_test))
-
+def acuracia(repeticao, X_test, y_test):#mede a acuracia do classificador, retorna a media, o maior, os resultados e o nome do maior
+    resultados = []
+    anterior=0
+    for i in range(repeticao):
+        classificador = joblib.load('clf/TreeClas' + str(i) + '.pkl')
+        atual=classificador.score(X_test,y_test)
+        resultados.append(atual)
+        if (atual>anterior):
+            anterior=atual
+            nome='TreeClas'+str(i)
+    maior=max(resultados)
+    media=numpy.mean(resultados)
+    return maior, media, resultados, nome
 
 def main():
     dataset = arff.load(open('letter.arff'))
@@ -35,8 +46,9 @@ def main():
     if (os.path.exists("clf/TreeClas99.pkl") == False):
         cria_classificadores(X_train,y_train,100)
     else:
-        for i in range(100):
-            classificador=joblib.load('clf/TreeClas'+str(i)+'.pkl')
-            acuracia(classificador,X_test,y_test )
+        maior, media, resultados, nome=acuracia(100,X_test,y_test)
+        print(nome)
+        print (maior)
+        print (resultados)
 if __name__ == '__main__':
         main()
