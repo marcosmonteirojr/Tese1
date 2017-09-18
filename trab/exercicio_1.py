@@ -230,7 +230,6 @@ for i in [0.5, 0.6, 0.8, 1]:
     for j in [5, 10, 25, 50, 75, 100]:
         print("Bagging: max_samples={} n_estimators={}".format(i,j))
         bagging_bag = BaggingClassifier(c45, n_estimators=j, max_samples=i)
-        bagging_bag.predict_proba(.)
         scores, confusions = test_classifier(bagging_bag, repeats)
         print("Media: {:.5f}, Desvio: {:.5f}, Melhor: {:.5f}, Pior: {:.5f}".format(scores.mean(), scores.std(), scores.max(), scores.min()))
         print_confusion_matrix(confusions, scores.argmax())
@@ -241,7 +240,7 @@ c45 = tree.DecisionTreeClassifier(criterion='entropy',max_features='sqrt', max_l
 for i in [0.5, 0.7, 0.9]:
     for j in [5, 10, 25, 50, 75, 100]:
         print("RSS: max_features={} n_estimators={}".format(i,j))
-        bagging_rss = BaggingClassifier(c45, n_estimators= j, max_samples=1, max_features=i)
+        bagging_rss = BaggingClassifier(c45, n_estimators= j, max_samples=1, )
         scores, confusions = test_classifier(bagging_rss, repeats)
         print("Media: {:.5f}, Desvio: {:.5f}, Melhor: {:.5f}, Pior: {:.5f}".format(scores.mean(), scores.std(), scores.max(), scores.min()))
         print_confusion_matrix(confusions, scores.argmax())
