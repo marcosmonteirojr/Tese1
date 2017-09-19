@@ -28,7 +28,7 @@ def cria_dataset(dataset): #cria treino teste e validacao e grava em arquivo
         instancias.append(i[:-1])#salva so as instancias(sem classes)
 
     #tree = DecisionTreeClassifier()
-    X_train, X_x, y_train, y_y = train_test_split(instancias, labels, test_size=0.3, random_state=True, stratify=labels)#divide a base de treino
+    X_train, X_x, y_train, y_y = train_test_split(instancias, labels, test_size=0.5, random_state=True, stratify=labels)#divide a base de treino
     X_test, X_val, y_test, y_val= train_test_split(X_x, y_y, test_size=0.5, random_state=None, stratify=y_y)#divide a base entre teste e validacao
     # tree.fit(X_train,y_train)
     # print(tree.score(X_val,y_val))
@@ -90,7 +90,7 @@ def cria_classificadores(X_train, y_train, repeticoes, dataset):#cria classifica
     for x in range(repeticoes):
         tree = DecisionTreeClassifier()
         r = random.seed()
-        X_bag, X_yyy, y_bag, y_yyt = train_test_split(X_train, y_train, test_size=0.3, random_state=r, stratify=y_train)
+        X_bag, X_yyy, y_bag, y_yyt = train_test_split(X_train, y_train, test_size=0.5, random_state=r, stratify=y_train)
         dados = dict()
         X = list()
         for i in range(len(y_bag)):
@@ -143,7 +143,7 @@ def carrega_classificadores():
 
 def evalEnsemble(individual):
    # print (individual)
-
+    global current_ind
     c=[]
     n=[]
 
@@ -182,7 +182,7 @@ def mutEnsemble(individual):
         individual[idx_rand] = 1
     return individual,
 
-def check(individual):
+def check_marcos(individual):
 
     c=[]
     n=[]
@@ -219,14 +219,13 @@ cria_classificadores(X_train,Y_train,100,dataset)
 # X_val,Y_val=abre_arff(dataset3)
 #cria_classificadores(X_train,Y_train,100,dataset)
 carrega_classificadores()
-individual_size = 100
-nr_generation = 5
-qt_selection = 6  # (elitismo)
-nr_children_generation = 100
-proba_crossover = 0.7
+individual_size = 10
+nr_generation = 10
+qt_selection = 2
+nr_children_generation = 30
+proba_crossover = 0.8
 proba_mutation = 0
 
-#random.seed(64)
 creator.create("Fitness", base.Fitness, weights=(1.0,))
 creator.create("Individual", list, fitness=creator.Fitness)
 
@@ -257,9 +256,9 @@ algorithms.eaMuPlusLambda(pop, toolbox, qt_selection, nr_children_generation, pr
                          nr_generation,stats,  halloffame=hof, verbose=True)
 
 
-print(hof)
+
 #of
-print("Accuracy: {}".format(check(X_test, Y_test, hof[0])))
+print("Accuracy: {}".format(check_marcos(hof[0])))
 
 #else:
  #   maior, media, resultados, nome=acuracia(100,X_test,y_test)
