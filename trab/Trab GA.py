@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.externals import joblib
+from sklearn.model_selection import GridSearchCV
 global resultados, media, maior
 from deap import algorithms
 from deap import base
@@ -10,20 +11,27 @@ from deap import creator
 from deap import tools
 from sklearn.ensemble import VotingClassifier
 classifiers = list()
-current_ind = 1
 resultados=[]
 
 def cria_dataset(dataset): #cria treino teste e validacao e grava em arquivo
     print('Criando dataset\n')
-    lables =[]
+    labels =[]
     instancias=[]
     for i in range(len(dataset['data'])):  # percorre a base e separa os labels das classes
-        lables.append(dataset['data'][i][16])
-        lables = [str(w) for w in lables]#transforma as classes em string
+        #labels.append(dataset['data'][i][16])
+        #print (labels)
+        #labels = [str(w) for w in labels]#transforma as classes em string
+        labels.append(ord(dataset['data'][i][-1])-65)
+
+
     for i in dataset['data']:
         instancias.append(i[:-1])#salva so as instancias(sem classes)
-    X_train, X_x, y_train, y_y = train_test_split(instancias, lables, test_size=0.5, random_state=True, stratify=lables)#divide a base de treino
+
+    #tree = DecisionTreeClassifier()
+    X_train, X_x, y_train, y_y = train_test_split(instancias, labels, test_size=0.3, random_state=True, stratify=labels)#divide a base de treino
     X_test, X_val, y_test, y_val= train_test_split(X_x, y_y, test_size=0.5, random_state=None, stratify=y_y)#divide a base entre teste e validacao
+    # tree.fit(X_train,y_train)
+    # print(tree.score(X_val,y_val))
 
     dados = dict()
     X=list()
@@ -60,7 +68,7 @@ def cria_dataset(dataset): #cria treino teste e validacao e grava em arquivo
     dados['data'] = X
     cria_arff(dataset, dados, "validacao",'dataset')
     print ('Criando validacao\n')
-    return X_train, X_test, X_val, y_train, y_test, y_val # X_ -> bases sem lables, y_-> lables
+    return X_train, X_test, X_val, y_train, y_test, y_val # X_ -> bases sem labels, y_-> labels
 
 
 def cria_arff(info, data, nome, pasta):
@@ -78,11 +86,11 @@ def cria_arff(info, data, nome, pasta):
 
 
 def cria_classificadores(X_train, y_train, repeticoes, dataset):#cria classificadores e os bags
-   
-    tree = DecisionTreeClassifier()
+    #tree=DecisionTreeClassifier()
     for x in range(repeticoes):
+        tree = DecisionTreeClassifier()
         r = random.seed()
-        X_bag, X_test, y_bag, y_test = train_test_split(X_train, y_train, test_size=0.5, random_state=r, stratify=y_train)  # divide o treino para criar os bags
+        X_bag, X_yyy, y_bag, y_yyt = train_test_split(X_train, y_train, test_size=0.3, random_state=r, stratify=y_train)
         dados = dict()
         X = list()
         for i in range(len(y_bag)):
@@ -99,14 +107,14 @@ def cria_classificadores(X_train, y_train, repeticoes, dataset):#cria classifica
         print('Criando classificador-Tree' + str(x))
 
 def abre_arff(dataset):
-    lables = []
+    labels = []
     instancias = []
     for i in range(len(dataset['data'])):  # percorre a base e separa os labels das classes
-        lables.append(dataset['data'][i][16])
-        lables = [str(w) for w in lables]  # transforma as classes em string
+        labels.append(dataset['data'][i][16])
+        labels = [str(w) for w in labels]  # transforma as classes em string
     for i in dataset['data']:
         instancias.append(i[:-1])  # salva so as instancias(sem classes)
-    return instancias, lables
+    return instancias, labels
 
 def carrega_classificadores():
     global nome
@@ -133,22 +141,12 @@ def carrega_classificadores():
 #     media=numpy.mean(resultados)
 #     return maior, media, resultados, nome
 
-def CombineBySum(results):
-    if (len(results) > 0):
-        if (len(results[0]) > 0):
-            vote_list = [0 for i in range(len(results[0]))]
-            for i in results:
-                for j in range(len(i)):
-                    vote_list[j] += i[j]
-            return np.argmax(np.array(vote_list))
-        return -1
-    return -1
-
 def evalEnsemble(individual):
-    print (individual)
-    global current_ind
+   # print (individual)
+
     c=[]
     n=[]
+
     for j in range(len(individual)):
         if (individual[j] == 1):
             nome_val=nome[j]
@@ -156,22 +154,20 @@ def evalEnsemble(individual):
             c.append(pred_val)
             n.append(nome_val)
 
-    eclf = VotingClassifier(estimators=zip(n,c),voting='soft')
+    eclf = VotingClassifier(estimators=zip(n,c),voting='hard')
     c.append(eclf)
     n.append('Ensemble')
+    scores=[]
   #  print(zip(c,n))
     for clf, label in zip(c,n):
-        scores = cross_val_score(clf, X_val, Y_val, cv=2, scoring='accuracy')
-        print("Accuracy: %f (+/- %0.2f) [%s]" % (scores.mean(), scores.std(), label))
-    print(scores.mean())
+        scores.append( cross_val_score(clf, X_val, Y_val, cv=2, scoring='accuracy'))
+    print("Accuracy: %f (+/- %0.2f) [%s]" % (np.mean(scores), np.std(scores), label))
+    #print(scores.mean())
 
-    return scores.mean(),
+    return np.mean(scores),
 
 def cxEnsemble(ind1, ind2):
-    # tmp1 = ind1
 
-
-    # tmp2 = ind2
     midsize = individual_size / 2
     ind1 = ind1[0:midsize - 2] + ind2[midsize:individual_size - 1]
     ind2 = ind2[0:midsize - 2] + ind1[midsize:individual_size - 1]
@@ -186,21 +182,51 @@ def mutEnsemble(individual):
         individual[idx_rand] = 1
     return individual,
 
+def check(individual):
+
+    c=[]
+    n=[]
+
+    for j in range(len(individual)):
+        if (individual[j] == 1):
+            nome_val=nome[j]
+            pred_val = classifiers[j]
+            c.append(pred_val)
+            n.append(nome_val)
+
+    eclf = VotingClassifier(estimators=zip(n,c),voting='hard')
+    c.append(eclf)
+    n.append('Ensemble')
+    scores=[]
+  #  print(zip(c,n))
+    for clf, label in zip(c,n):
+        scores.append( cross_val_score(clf, X_test, Y_test, cv=2, scoring='accuracy'))
+    return np.mean(scores),
+
+
+
+###############################################################################
 
 dataset = arff.load(open('letter.arff'))
 X_train, X_test, X_val, Y_train, Y_test, Y_val =  cria_dataset(dataset)
 cria_classificadores(X_train,Y_train,100,dataset)
+#carrega_classificadores()
+# dataset1=arff.load(open('dataset/treino.arff'))
+# dataset2=arff.load(open('dataset/teste.arff'))
+# dataset3=arff.load(open("dataset/validacao.arff"))
+# X_train,Y_train=abre_arff(dataset1)
+# X_test,Y_test=abre_arff(dataset2)
+# X_val,Y_val=abre_arff(dataset3)
+#cria_classificadores(X_train,Y_train,100,dataset)
 carrega_classificadores()
-
-individual_size = 10
-random.seed(64)
+individual_size = 100
 nr_generation = 5
 qt_selection = 6  # (elitismo)
-nr_children_generation = 10
+nr_children_generation = 100
 proba_crossover = 0.7
-proba_mutation = 0.2
+proba_mutation = 0
 
-random.seed(64)
+#random.seed(64)
 creator.create("Fitness", base.Fitness, weights=(1.0,))
 creator.create("Individual", list, fitness=creator.Fitness)
 
@@ -215,7 +241,7 @@ toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 toolbox.register("evaluate", evalEnsemble)
 toolbox.register("mate", cxEnsemble)
 toolbox.register("mutate", mutEnsemble)
-toolbox.register("select", tools.selNSGA2)
+toolbox.register("select", tools.selRoulette)
 
 pop = toolbox.population(n=qt_selection)
 
@@ -228,13 +254,12 @@ stats.register("min", np.min, axis=0)
 stats.register("max", np.max, axis=0)
 #
 algorithms.eaMuPlusLambda(pop, toolbox, qt_selection, nr_children_generation, proba_crossover, proba_mutation,
-                         nr_generation,)
+                         nr_generation,stats,  halloffame=hof, verbose=True)
 
 
 print(hof)
-#
-
-#print("Accuracy: {}".format(CheckAccuracy(X_test, Y_test, hof[0])))
+#of
+print("Accuracy: {}".format(check(X_test, Y_test, hof[0])))
 
 #else:
  #   maior, media, resultados, nome=acuracia(100,X_test,y_test)

@@ -104,32 +104,54 @@ def Classificadores():
     print ("\n")
 
     """MLP"""
-    mlp=MLPClassifier(solver='lbfgs', alpha=.1, hidden_layer_sizes=(5, 5), random_state=1)
-    #mlp.fit(X_train,y_train)
+    tuned_parameters = [{'hidden_layer_sizes': [(4)], 'activation': ['tanh'],
+                       'solver': ['adam'], 'alpha': [1e-4, 1e-3],
+                       'learning_rate': ['adaptive'],
+                       'max_iter': [100],
+                       'tol': [1e-4],
+                       'momentum': [0.5]}]
+    mlp = GridSearchCV(MLPClassifier(), tuned_parameters, cv=5, scoring='accuracy', n_jobs=4)
+    mlp.fit(X_train,y_train)
     predict=cross_val_predict(mlp,X_test,y_test,cv=kf)
     m=metrics.accuracy_score(y_test,predict)
     print("MLP\n")
     print(confusion_matrix(y_test,predict))
     scores.append(m)#media dos scores do crosvalie
     print ("\n")
-
+    print_parameters(mlp)
    #  """Svm"""
-   #  tuned_parameters = [{'kernel': ['rbf'], 'gamma': [2, 1, 4e-1, 2e-1],
-   #                       'C': [5e-1, 5, 10, 50, 500]},
-   #                       {'kernel': ['linear'], 'C': [1e-2, 1e-1, 1, 10, 100, 1000]}]
-   #  clf_svm = GridSearchCV(SVC(probability=True), tuned_parameters,cv=kf, n_jobs=8)
-   #
-   # # clf.fit(X_train, y_train)
-   #  predict=cross_val_predict(clf_svm,X_test,y_test,cv=kf)
-   #  m=metrics.accuracy_score(y_test,predict)
-   #  print("SVM\n")
-   #  print(confusion_matrix(y_test,predict))
-   #  scores.append(m)#media dos scores do crosvalie
-   #  #print_parameters(clf_svm)
-   #  print("\n")
+
+    #  tuned_parameters = [{'kernel': ['rbf'], 'gamma': [2, 1, 4e-1, 2e-1],
+    #                       'C': [5e-1, 5, 10, 50, 500]},
+    #                       {'kernel': ['linear'], 'C': [1e-2, 1e-1, 1, 10, 100, 1000]}]
+    #  clf_svm = GridSearchCV(SVC(probability=True), tuned_parameters,cv=kf, n_jobs=8)
+    #
+    # # clf.fit(X_train, y_train)
+    #  predict=cross_val_predict(clf_svm,X_test,y_test,cv=kf)
+    #  m=metrics.accuracy_score(y_test,predict)
+    #  print("SVM\n")
+    #  print(confusion_matrix(y_test,predict))
+    #  scores.append(m)#media dos scores do crosvalie
+    #  #print_parameters(clf_svm)
+    #  print("\n")
+
+    tuned_parameters = [{'kernel': ['rbf'], 'gamma': [4e-1, 2e-1],
+                          'C': [5e-1, 5]},
+                          {'kernel': ['linear'], 'C': [1e-2, 1e-1]}]
+    clf_svm = GridSearchCV(SVC(probability=True), tuned_parameters,cv=kf, n_jobs=8)
+
+    # clf.fit(X_train, y_train)
+    predict=cross_val_predict(clf_svm,X_test,y_test,cv=kf)
+    m=metrics.accuracy_score(y_test,predict)
+    print("SVM\n")
+    print(confusion_matrix(y_test,predict))
+    scores.append(m)#media dos scores do crosvalie
+     #print_parameters(clf_svm)
+    print("\n")
+    #print_parameters(clf_svm)
 
     """Bagging"""
-    c45 = tree.DecisionTreeClassifier(criterion='entropy',max_features='sqrt', max_leaf_nodes=12, max_depth=3, splitter='best')
+    c45 = tree.DecisionTreeClassifier(criterion='entropy',max_features='sqrt', max_leaf_nodes=12, max_depth=3, splitter='best',)
     x=0
     for i in [0.5, 0.6, 0.8, 1]:
         for j in [5, 10, 25, 50, 75, 100]:
@@ -214,4 +236,7 @@ def Classificadores():
     print ("\n")
     print ("\n")
 
+
+
 Classificadores()
+print(scores)
