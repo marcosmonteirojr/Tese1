@@ -161,7 +161,7 @@ def evalEnsemble(individual):
   #  print(zip(c,n))
     for clf, label in zip(c,n):
         scores.append( cross_val_score(clf, X_val, Y_val, cv=2, scoring='accuracy'))
-  
+
     print("Accuracy: %f (+/- %0.2f) [%s]" % (np.mean(scores), np.std(scores), label))
     #print(scores.mean())
 
