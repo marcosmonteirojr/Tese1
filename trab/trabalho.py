@@ -1,6 +1,6 @@
 import arff, os
 import numpy as np
-
+#from __future__ import print_function
 from sklearn.model_selection import train_test_split,  ShuffleSplit, cross_val_predict,  StratifiedKFold
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
@@ -24,13 +24,13 @@ predicted=[]
 def print_parameters(clf):
     print("Paramentros escolhidos {:.5f}% pelogrid:".format(clf.best_score_))
     print(clf.best_estimator_)
-    print()
-    print("------------------------------")
-    print()
-    means = clf.cv_results_['mean_test_score']
-    stds = clf.cv_results_['std_test_score']
-    for mean, std, params in zip(means, stds, clf.cv_results_['params']):
-        print("%0.3f (+/-%0.03f) for %r" % (mean, std * 2, params))
+    # print()
+    # print("------------------------------")
+    # print()
+    # means = clf.cv_results_['mean_test_score']
+    # stds = clf.cv_results_['std_test_score']
+    # for mean, std, params in zip(means, stds, clf.cv_results_['params']):
+    #     print("%0.3f (+/-%0.03f) for %r" % (mean, std * 2, params))
 """
 cria base de dados 
 instancias sao dados sem lable
@@ -45,8 +45,9 @@ def wine(dataset):
     lables = [int(w) for w in lables]#transforma em int
     for i in dataset['data']:
         instancias.append(i[:-1])#tira a classe das instancias
-    X_train, X_test, y_train, y_test = train_test_split(instancias, lables, test_size=0.3, random_state=None)#divide a base entre treino e teste
-    kf = StratifiedKFold(n_splits=10, shuffle=False, random_state=None, stratify=lables)
+    X_train, X_test, y_train, y_test = train_test_split(instancias, lables, test_size=0.3, random_state=None, stratify=lables)#divide a base entre treino e teste
+
+    kf = StratifiedKFold(n_splits=10, shuffle=False, random_state=None)
     return X_train, X_test, y_train, y_test, kf
 
 def diabetes(dataset):
@@ -66,14 +67,17 @@ def diabetes(dataset):
 '''_____________________________________________________________________________________________________________________'''
 
 def Classificadores():
-    diabetes(dataset2)
+
 
     """arvore de decisao"""
-    tuned_parameters = [{'splitter': ['best', 'random'], 'max_depth': [3,6,9,12],
-                        'max_leaf_nodes': [3,6,9,12], 'max_features': ['auto','sqrt','log2'],
-                        'criterion': ['gini','entropy']}]
-    t = GridSearchCV(tree.DecisionTreeClassifier(criterion='entropy'), tuned_parameters, cv=kf, n_jobs=4)
-    predict=cross_val_predict(t,X_test,y_test,cv=kf)
+    tuned_parameters = [{'splitter': ['best', 'random'], 'max_depth': [3, 9, 12],
+                         'max_leaf_nodes': [3, 9, 12], 'max_features': ['auto'],
+                         'criterion': ['entropy']}]
+
+
+    t = GridSearchCV(tree.DecisionTreeClassifier(), tuned_parameters, cv=5, scoring='accuracy', n_jobs=4)
+    t.fit(X_test, y_test)
+    predict=cross_val_predict(t.best_estimator_,X_test,y_test,cv=kf)
     m=metrics.accuracy_score(y_test, predict)
     print("Tree\n")
     print(confusion_matrix(y_test,predict))
@@ -81,21 +85,15 @@ def Classificadores():
     print("\n")
     print_parameters(t)
     print ("\n")
+
 ###########################################################################################################
-    """naive gaussiano"""
-    nb=GaussianNB()
-    nb.fit(X_train,y_train)
-    predict=cross_val_predict(nb,instancias,lables,cv=kf)
-    m=metrics.accuracy_score(lables, predict)
-    print("NB\n")
-    print(confusion_matrix(lables,predict))
-    scores.append(m)#media dos scores do crosvalie
-    print ("\n")
-###########################################################################################################
+
     """knn"""
-    tuned_parameters = [{'n_neighbors': [i for i in range(1,20)],'algorithm':['ball_tree','kd_tree'], 'leaf_size':[10,20,30] }]
-    neigh = GridSearchCV(KNeighborsClassifier(), tuned_parameters, cv=kf, n_jobs=4)
-    predict=cross_val_predict(neigh,X_test,y_test,cv=kf)
+    tuned_parameters = [{'n_neighbors': [i for i in range(1, 20)], 'leaf_size': [10, 15, 30, 40, 50],
+                         'metric': ['euclidean', 'manhattan']}]
+    neigh = GridSearchCV(KNeighborsClassifier(), tuned_parameters, cv=kf, n_jobs=4,scoring='accuracy')
+    neigh.fit(X_test,y_test)
+    predict=cross_val_predict(neigh.best_estimator_,X_test,y_test,cv=kf)
     m=metrics.accuracy_score(y_test, predict)
     print("Knn\n")
     print(confusion_matrix(y_test,predict))
@@ -112,7 +110,7 @@ def Classificadores():
                        'momentum': [0.5]}]
     mlp = GridSearchCV(MLPClassifier(), tuned_parameters, cv=5, scoring='accuracy', n_jobs=4)
     mlp.fit(X_train,y_train)
-    predict=cross_val_predict(mlp,X_test,y_test,cv=kf)
+    predict=cross_val_predict(mlp.best_estimator_,X_test,y_test,cv=kf)
     m=metrics.accuracy_score(y_test,predict)
     print("MLP\n")
     print(confusion_matrix(y_test,predict))
@@ -133,7 +131,8 @@ def Classificadores():
                           'C': [5e-1, 5]},
                           {'kernel': ['linear'], 'C': [1e-2, 1e-1]}]
     clf_svm = GridSearchCV(SVC(probability=True), tuned_parameters,cv=kf, n_jobs=8)
-    predict=cross_val_predict(clf_svm,X_test,y_test,cv=kf)
+    clf_svm.fit(X_test,y_test)
+    predict=cross_val_predict(clf_svm.best_estimator_,X_test,y_test,cv=kf)
     m=metrics.accuracy_score(y_test,predict)
     print("SVM\n")
     print(confusion_matrix(y_test,predict))
@@ -141,6 +140,16 @@ def Classificadores():
     print("\n")
     print_parameters(clf_svm)
     print("\n")
+###########################################################################################################
+    """naive gaussiano"""
+    nb = GaussianNB()
+    nb.fit(X_train, y_train)
+    predict = cross_val_predict(nb, instancias, lables, cv=kf)
+    m = metrics.accuracy_score(lables, predict)
+    print("NB\n")
+    print(confusion_matrix(lables, predict))
+    scores.append(m)  # media dos scores do crosvalie
+    print ("\n")
 ###########################################################################################################
 ############################################---Ensembles----###############################################
     """Bagging"""
@@ -221,9 +230,10 @@ def Classificadores():
     print("Boosting, Melhor parametro: n_estimator={}, score={}".format(estimator, m))
     scores.append(m)  # media dos scores do crosvalie
     print ("\n")
+    print (scores)
     print ("\n")
-    return t,neigh,mlp,clf_svm,nb
+    #return t,neigh,mlp,clf_svm,nb
 
-
+diabetes(dataset2)
 Classificadores()
-print(scores)
+

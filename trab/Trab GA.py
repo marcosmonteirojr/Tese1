@@ -123,7 +123,7 @@ def carrega_classificadores():
         nome.append('TreeClas'+str(i))
         classifiers.append(joblib.load('clf/TreeClas'+str(i)+'.pkl'))
     print ('carregando classificadores')
-
+    print (classifiers)
     return classifiers, nome
 
 
@@ -142,7 +142,7 @@ def carrega_classificadores():
 #     return maior, media, resultados, nome
 
 def evalEnsemble(individual):
-   # print (individual)
+    print (individual)
     global current_ind
     c=[]
     n=[]
@@ -154,18 +154,23 @@ def evalEnsemble(individual):
             c.append(pred_val)
             n.append(nome_val)
 
+    print (n)
     eclf = VotingClassifier(estimators=zip(n,c),voting='hard')
-    c.append(eclf)
-    n.append('Ensemble')
-    scores=[]
-  #  print(zip(c,n))
-    for clf, label in zip(c,n):
-        scores.append( cross_val_score(clf, X_val, Y_val, cv=2, scoring='accuracy'))
+    eclf.fit(X_val,Y_val)
+    #print (eclf.estimators_)
+    return(eclf.score(X_test,Y_test)),
 
-    print("Accuracy: %f (+/- %0.2f) [%s]" % (np.mean(scores), np.std(scores), label))
+  #   c.append(eclf)
+  #   n.append('Ensemble')
+  #   scores=[]
+  # #  print(zip(c,n))
+  #   for clf, label in zip(c,n):
+  #       scores.append( cross_val_score(clf, X_val, Y_val, cv=2, scoring='accuracy'))
+  #
+  #   print("Accuracy: %f (+/- %0.2f) [%s]" % (np.mean(scores), np.std(scores), label))
     #print(scores.mean())
 
-    return np.mean(scores),
+    #return np.mean(scores),
 
 def cxEnsemble(ind1, ind2):
 
